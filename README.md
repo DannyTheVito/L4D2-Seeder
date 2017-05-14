@@ -12,6 +12,7 @@ Linux. Makes use of [Python-Valve](https://github.com/Holiverh/python-valve)
  - Steam
  - L4D2 Client (Not server)
  - Python 2 / 3
+ - psutil module for Python (python -m pip install psutil)
 
 ## Why would I use this?
 As of the time of writing, Valve sends users looking to find a match in L4D2 to servers already occupied by at least one player. This script will connect to a list of servers one by one, and disconnect once there is a user connected, thereby seeding the server so that Valve will continue filling it with users.

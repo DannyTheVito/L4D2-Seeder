@@ -6,9 +6,10 @@ import random
 import time
 import sys
 import os
+import psutil
 
 # Time to wait on the server in seconds before moving on.
-stale_server_time = 300
+stale_server_time = 180
 
 # Hacked together counter system.
 seeded = 0
@@ -94,6 +95,24 @@ def destroy_instances():
       output, err = subprocess.Popen("ps cax | grep hl2_linux", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
       time.sleep(2)
 
+def restart_steam():
+  """ Checks if L4D2 crashes and restarts steam if true. """
+  devnull = open(os.devnull, 'w')
+  steamexe = [path_to_steam]
+  for pid in psutil.pids():
+    p = psutil.Process(pid)
+    if p.name() == "WerFault.exe":
+      print("L4D2 IS CRASHING!")
+      subprocess.call("TASKKILL /F /IM WerFault.exe", stdout=devnull, stderr=subprocess.STDOUT)
+      time.sleep(3)
+      subprocess.call("TASKKILL /F /IM steam.exe", stdout=devnull, stderr=subprocess.STDOUT)
+      print("Restarting Steam")
+      time.sleep(5)
+      subprocess.Popen(steamexe, shell=False, stdout=devnull)
+      time.sleep(15)
+    else:
+      break
+
 def loop(servers, path_to_steam):
   """ Runs through the server list, seeds servers as necessary. """
   current_server = servers[0]
@@ -148,6 +167,7 @@ def loop(servers, path_to_steam):
         print("_" * 100)
         print("Totals: Servers seeded: %s / Connection fails: %d / Stale servers: %d" % (seeded, timedout, stale))
         destroy_instances()
+        restart_steam()
 
       # This server is already seeded.
       else:
@@ -158,7 +178,7 @@ def loop(servers, path_to_steam):
       current_server = servers[0]
 
     except volvo.NoResponseError:
-      print("%s: Master server request timed out! Volvo pls." % (current_time()))
+      print("%s: Master server request timed out! Volvo pls. Server: %s:%d" % (current_time(), current_server[0], current_server[1]))
 
     # Make sure that when the script is canceled it closes running instances of L4D2
     except (KeyboardInterrupt, SystemExit):
