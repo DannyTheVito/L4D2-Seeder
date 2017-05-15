@@ -105,7 +105,7 @@ def restart_steam():
       print("L4D2 IS CRASHING!")
       subprocess.call("TASKKILL /F /IM WerFault.exe", stdout=devnull, stderr=subprocess.STDOUT)
       time.sleep(3)
-      subprocess.call("TASKKILL /F /IM steam.exe", stdout=devnull, stderr=subprocess.STDOUT)
+      subprocess.call("TASKKILL /F /IM Steam.exe", stdout=devnull, stderr=subprocess.STDOUT)
       print("Restarting Steam")
       time.sleep(5)
       subprocess.Popen(steamexe, shell=False, stdout=devnull)
